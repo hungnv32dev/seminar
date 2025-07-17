@@ -113,9 +113,10 @@ class QrCodeService
 
         // Check if participant is already checked in
         if ($participant->is_checked_in) {
+            $checkedInTime = $participant->checked_in_at ? $participant->checked_in_at->format('Y-m-d H:i:s') : 'unknown time';
             return [
                 'valid' => true,
-                'message' => 'Participant is already checked in at ' . $participant->checked_in_at->format('Y-m-d H:i:s'),
+                'message' => 'Participant is already checked in at ' . $checkedInTime,
                 'participant' => $participant,
                 'already_checked_in' => true,
             ];

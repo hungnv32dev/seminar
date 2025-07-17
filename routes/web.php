@@ -18,6 +18,18 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// QR Code Generation - Public route for email templates
+Route::get('/qr-code/{ticket_code}', function ($ticket_code) {
+    $qrCodeService = app(\App\Services\QrCodeService::class);
+    
+    // Generate QR code as PNG
+    $qrCode = $qrCodeService->generateQrCode($ticket_code, 200);
+    
+    return response($qrCode)
+        ->header('Content-Type', 'image/png')
+        ->header('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+})->name('qr-code.generate');
+
 Route::middleware(['auth', 'verified', 'active'])->group(function () {
     // Dashboard - Available to all authenticated users
     Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -148,6 +160,8 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::middleware('permission:export check-in reports')->group(function () {
         Route::get('/check-in/workshop/{workshop}/export', [CheckInController::class, 'exportReport'])->name('check-in.export-report');
     });
+
+
 
     // User Management
     Route::middleware('permission:view users')->group(function () {

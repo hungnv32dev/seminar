@@ -195,7 +195,7 @@
   - Integrate with Spatie permission system
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 10.1_
 
-- [-] 7. Create Blade views with Metronic theme integration
+- [x] 7. Create Blade views with Metronic theme integration
 
 - [x] 7.1 Create base layout using Metronic theme
 
@@ -280,7 +280,7 @@
   - _Requirements: 1.4, 1.5, 10.1_
 
 - [ ] 10. Create comprehensive test suite
-- [-] 10.1 Create unit tests for service classes
+- [ ] 10.1 Create unit tests for service classes
   - Test WorkshopService, ParticipantService, QrCodeService, EmailService
   - Mock dependencies and test business logic
   - _Requirements: 2.1, 4.1, 5.1, 7.1_

@@ -313,14 +313,18 @@ class ParticipantService
      */
     public function getWorkshopParticipantStats(Workshop $workshop): array
     {
-        $participants = $workshop->participants();
+        $totalParticipants = $workshop->participants()->count();
+        $paidParticipants = $workshop->participants()->where('is_paid', true)->count();
+        $unpaidParticipants = $workshop->participants()->where('is_paid', false)->count();
+        $checkedInParticipants = $workshop->participants()->where('is_checked_in', true)->count();
+        $notCheckedInParticipants = $workshop->participants()->where('is_checked_in', false)->count();
         
         return [
-            'total' => $participants->count(),
-            'paid' => $participants->where('is_paid', true)->count(),
-            'unpaid' => $participants->where('is_paid', false)->count(),
-            'checked_in' => $participants->where('is_checked_in', true)->count(),
-            'not_checked_in' => $participants->where('is_checked_in', false)->count(),
+            'total' => $totalParticipants,
+            'paid' => $paidParticipants,
+            'unpaid' => $unpaidParticipants,
+            'checked_in' => $checkedInParticipants,
+            'not_checked_in' => $notCheckedInParticipants,
             'by_ticket_type' => $workshop->ticketTypes()
                 ->withCount(['participants', 'participants as paid_count' => function ($query) {
                     $query->where('is_paid', true);
