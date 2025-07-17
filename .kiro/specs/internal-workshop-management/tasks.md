@@ -274,13 +274,13 @@
   - Add password reset functionality for internal users
   - _Requirements: 1.6, 10.1_
 
-- [ ] 9.2 Implement role-based access control
+- [x] 9.2 Implement role-based access control
   - Create middleware for role and permission checking
   - Apply authorization to all controllers and routes
   - _Requirements: 1.4, 1.5, 10.1_
 
 - [ ] 10. Create comprehensive test suite
-- [ ] 10.1 Create unit tests for service classes
+- [-] 10.1 Create unit tests for service classes
   - Test WorkshopService, ParticipantService, QrCodeService, EmailService
   - Mock dependencies and test business logic
   - _Requirements: 2.1, 4.1, 5.1, 7.1_
