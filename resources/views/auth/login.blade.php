@@ -90,14 +90,11 @@
     </div>
     <!-- End Submit Button -->
 
-    <!-- Sign up link -->
-    @if (Route::has('register'))
-        <div class="text-gray-500 text-center fw-semibold fs-6">
-            Not a Member yet? 
-            <a href="{{ route('register') }}" class="link-primary">Sign up</a>
-        </div>
-    @endif
-    <!-- End Sign up link -->
+    <!-- Contact admin link -->
+    <div class="text-gray-500 text-center fw-semibold fs-6">
+        Need access? Contact your system administrator.
+    </div>
+    <!-- End Contact admin link -->
 </form>
 <!-- End Form -->
 

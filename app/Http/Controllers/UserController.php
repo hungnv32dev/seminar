@@ -349,13 +349,13 @@ class UserController extends Controller
     public function bulkAssignRole(Request $request): RedirectResponse
     {
         $request->validate([
-            'user_ids' => 'required|array|min:1',
-            'user_ids.*' => 'exists:users,id',
+            'user_ids' => 'required|string',
             'role' => 'required|exists:roles,name',
         ]);
 
         try {
-            $users = User::whereIn('id', $request->user_ids)->get();
+            $userIds = explode(',', $request->user_ids);
+            $users = User::whereIn('id', $userIds)->get();
             
             foreach ($users as $user) {
                 $user->assignRole($request->role);
@@ -367,6 +367,64 @@ class UserController extends Controller
         } catch (Exception $e) {
             return back()
                 ->with('error', 'Failed to assign role: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Bulk delete users.
+     */
+    public function bulkDelete(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'user_ids' => 'required|array|min:1',
+            'user_ids.*' => 'exists:users,id',
+        ]);
+
+        try {
+            // Prevent deleting the current user
+            $userIds = array_filter($request->user_ids, function($id) {
+                return $id != auth()->id();
+            });
+
+            if (empty($userIds)) {
+                return back()
+                    ->with('error', 'Cannot delete your own account or no valid users selected.');
+            }
+
+            $users = User::whereIn('id', $userIds)->get();
+            $deletedCount = 0;
+            $errors = [];
+
+            foreach ($users as $user) {
+                // Check if user has created workshops
+                $createdWorkshopsCount = $user->createdWorkshops()->count();
+                if ($createdWorkshopsCount > 0) {
+                    $errors[] = "Cannot delete {$user->name} who has created {$createdWorkshopsCount} workshops.";
+                    continue;
+                }
+
+                // Detach from organized workshops
+                $user->organizedWorkshops()->detach();
+
+                // Remove all roles and permissions
+                $user->syncRoles([]);
+                $user->syncPermissions([]);
+
+                $user->delete();
+                $deletedCount++;
+            }
+
+            $message = "{$deletedCount} users deleted successfully.";
+            if (!empty($errors)) {
+                $message .= ' ' . implode(' ', $errors);
+            }
+
+            return back()
+                ->with($deletedCount > 0 ? 'success' : 'warning', $message);
+
+        } catch (Exception $e) {
+            return back()
+                ->with('error', 'Failed to delete users: ' . $e->getMessage());
         }
     }
 }

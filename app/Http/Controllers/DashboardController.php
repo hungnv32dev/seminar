@@ -14,12 +14,27 @@ class DashboardController extends Controller
     /**
      * Display the dashboard.
      */
-    public function index()
+    public function index(Request $request)
+    {
+        $data = $this->getDashboardData();
+        
+        // Return JSON for AJAX requests
+        if ($request->ajax()) {
+            return response()->json($data);
+        }
+        
+        return view('dashboard', compact('data'));
+    }
+    
+    /**
+     * Get dashboard data.
+     */
+    private function getDashboardData(): array
     {
         // Get workshop statistics
         $totalWorkshops = Workshop::count();
-        $activeWorkshops = Workshop::where('status', 'published')->orWhere('status', 'ongoing')->count();
-        $upcomingWorkshops = Workshop::upcoming()->count();
+        $activeWorkshops = Workshop::whereIn('status', ['published', 'ongoing'])->count();
+        $upcomingWorkshops = Workshop::where('start_date', '>', now())->count();
         $completedWorkshops = Workshop::where('status', 'completed')->count();
 
         // Get participant statistics
@@ -33,7 +48,7 @@ class DashboardController extends Controller
             ->sum('ticket_types.price');
 
         // Get recent workshops
-        $recentWorkshops = Workshop::with(['creator', 'participants'])
+        $recentWorkshops = Workshop::with(['creator', 'participants.ticketType'])
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
@@ -44,6 +59,14 @@ class DashboardController extends Controller
             ->get()
             ->pluck('count', 'status')
             ->toArray();
+            
+        // Ensure all statuses are represented
+        $allStatuses = ['draft', 'published', 'ongoing', 'completed', 'cancelled'];
+        foreach ($allStatuses as $status) {
+            if (!isset($workshopsByStatus[$status])) {
+                $workshopsByStatus[$status] = 0;
+            }
+        }
 
         // Get monthly workshop creation trend (last 6 months)
         $monthlyWorkshops = Workshop::select(
@@ -57,7 +80,12 @@ class DashboardController extends Controller
             ->orderBy('month', 'asc')
             ->get();
 
-        $data = [
+        // Get today's statistics
+        $todayWorkshops = Workshop::whereDate('created_at', today())->count();
+        $todayParticipants = Participant::whereDate('created_at', today())->count();
+        $todayCheckIns = Participant::whereDate('checked_in_at', today())->count();
+
+        return [
             'totalWorkshops' => $totalWorkshops,
             'activeWorkshops' => $activeWorkshops,
             'upcomingWorkshops' => $upcomingWorkshops,
@@ -71,8 +99,10 @@ class DashboardController extends Controller
             'monthlyWorkshops' => $monthlyWorkshops,
             'checkInRate' => $totalParticipants > 0 ? round(($checkedInParticipants / $totalParticipants) * 100, 1) : 0,
             'paymentRate' => $totalParticipants > 0 ? round(($paidParticipants / $totalParticipants) * 100, 1) : 0,
+            'todayWorkshops' => $todayWorkshops,
+            'todayParticipants' => $todayParticipants,
+            'todayCheckIns' => $todayCheckIns,
+            'lastUpdated' => now()->toISOString(),
         ];
-        
-        return view('dashboard', compact('data'));
     }
 }

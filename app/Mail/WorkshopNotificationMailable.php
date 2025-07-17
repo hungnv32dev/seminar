@@ -101,41 +101,8 @@ class WorkshopNotificationMailable extends Mailable implements ShouldQueue
      */
     protected function prepareTemplateVariables(): void
     {
-        $workshop = $this->participant->workshop;
-        $ticketType = $this->participant->ticketType;
-
-        $this->templateVariables = [
-            'name' => $this->participant->name,
-            'email' => $this->participant->email,
-            'phone' => $this->participant->phone,
-            'company' => $this->participant->company,
-            'position' => $this->participant->position,
-            'occupation' => $this->participant->occupation,
-            'address' => $this->participant->address,
-            'ticket_code' => $this->participant->ticket_code,
-            'qr_code_url' => route('qr-code.show', ['ticket_code' => $this->participant->ticket_code]),
-            'workshop_name' => $workshop->name,
-            'workshop_description' => $workshop->description,
-            'workshop_location' => $workshop->location,
-            'workshop_start_date' => $workshop->start_date->format('Y-m-d H:i:s'),
-            'workshop_end_date' => $workshop->end_date->format('Y-m-d H:i:s'),
-            'workshop_start_date_formatted' => $workshop->start_date->format('F j, Y \a\t g:i A'),
-            'workshop_end_date_formatted' => $workshop->end_date->format('F j, Y \a\t g:i A'),
-            'workshop_date_range' => $workshop->start_date->format('F j, Y') . 
-                ($workshop->start_date->format('Y-m-d') !== $workshop->end_date->format('Y-m-d') 
-                    ? ' - ' . $workshop->end_date->format('F j, Y') 
-                    : ''),
-            'ticket_type_name' => $ticketType->name,
-            'ticket_type_price' => number_format($ticketType->price, 2),
-            'ticket_type_price_formatted' => '$' . number_format($ticketType->price, 2),
-            'is_paid' => $this->participant->is_paid ? 'Yes' : 'No',
-            'payment_status' => $this->participant->is_paid ? 'Paid' : 'Unpaid',
-            'check_in_status' => $this->participant->is_checked_in ? 'Checked In' : 'Not Checked In',
-            'registration_date' => $this->participant->created_at->format('F j, Y'),
-            'days_until_workshop' => now()->diffInDays($workshop->start_date, false),
-            'app_name' => config('app.name', 'Workshop Management System'),
-            'app_url' => config('app.url', 'http://localhost'),
-        ];
+        $emailService = app(\App\Services\EmailService::class);
+        $this->templateVariables = $emailService->prepareTemplateVariables($this->participant);
     }
 
     /**
@@ -154,7 +121,7 @@ class WorkshopNotificationMailable extends Mailable implements ShouldQueue
             // Use custom template
             $this->renderedContent = $template->render($this->templateVariables);
         } else {
-            // Use default template
+            // Use default template without creating database record
             $this->renderedContent = $this->getDefaultTemplate();
         }
     }

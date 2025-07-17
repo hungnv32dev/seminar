@@ -7,6 +7,7 @@ use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\TicketTypeController;
 use App\Http\Controllers\CheckInController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EmailTemplateController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +18,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'active'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -59,9 +60,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/check-in/manual', [CheckInController::class, 'processManualCheckIn'])->name('check-in.manual.process');
     Route::post('/check-in/participant/{participant}', [CheckInController::class, 'checkInParticipant'])->name('check-in.participant');
     Route::get('/check-in/workshop/{workshop}/stats', [CheckInController::class, 'getWorkshopStats'])->name('check-in.workshop-stats');
-    Route::get('/check-in/workshop/{workshop}/recent', [CheckInController::class, 'getRecentCheckIns'])->name('check-in.recent');
-    Route::post('/check-in/{participant}/undo', [CheckInController::class, 'undoCheckIn'])->name('check-in.undo');
-    Route::get('/check-in/workshop/{workshop}/export', [CheckInController::class, 'exportReport'])->name('check-in.export');
+    Route::get('/check-in/workshop/{workshop}/recent', [CheckInController::class, 'getRecentCheckIns'])->name('check-in.recent-checkins');
+    Route::patch('/check-in/{participant}/undo', [CheckInController::class, 'undoCheckIn'])->name('check-in.undo');
+    Route::get('/check-in/workshop/{workshop}/export', [CheckInController::class, 'exportReport'])->name('check-in.export-report');
     Route::get('/check-in/workshop/{workshop}/dashboard', [CheckInController::class, 'dashboard'])->name('check-in.dashboard');
 
     // User Management
@@ -70,8 +71,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/users/roles-permissions', [UserController::class, 'rolesPermissions'])->name('users.roles-permissions');
     Route::get('/users/by-role', [UserController::class, 'getUsersByRole'])->name('users.by-role');
     Route::get('/users/{user}/stats', [UserController::class, 'getUserStats'])->name('users.stats');
-    Route::post('/users/bulk-status', [UserController::class, 'bulkUpdateStatus'])->name('users.bulk-status');
-    Route::post('/users/bulk-role', [UserController::class, 'bulkAssignRole'])->name('users.bulk-role');
+    Route::post('/users/bulk-update-status', [UserController::class, 'bulkUpdateStatus'])->name('users.bulk-update-status');
+    Route::post('/users/bulk-assign-role', [UserController::class, 'bulkAssignRole'])->name('users.bulk-assign-role');
+    Route::post('/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulk-delete');
+
+    // Email Template Management
+    Route::get('/workshops/{workshop}/email-templates', [EmailTemplateController::class, 'index'])->name('email-templates.index');
+    Route::get('/workshops/{workshop}/email-templates/create', [EmailTemplateController::class, 'create'])->name('email-templates.create');
+    Route::post('/workshops/{workshop}/email-templates', [EmailTemplateController::class, 'store'])->name('email-templates.store');
+    Route::get('/workshops/{workshop}/email-templates/{emailTemplate}', [EmailTemplateController::class, 'show'])->name('email-templates.show');
+    Route::get('/workshops/{workshop}/email-templates/{emailTemplate}/edit', [EmailTemplateController::class, 'edit'])->name('email-templates.edit');
+    Route::put('/workshops/{workshop}/email-templates/{emailTemplate}', [EmailTemplateController::class, 'update'])->name('email-templates.update');
+    Route::delete('/workshops/{workshop}/email-templates/{emailTemplate}', [EmailTemplateController::class, 'destroy'])->name('email-templates.destroy');
+    Route::get('/workshops/{workshop}/email-templates/{emailTemplate}/preview', [EmailTemplateController::class, 'preview'])->name('email-templates.preview');
+    Route::post('/workshops/{workshop}/email-templates/{emailTemplate}/duplicate', [EmailTemplateController::class, 'duplicate'])->name('email-templates.duplicate');
+    Route::post('/workshops/{workshop}/email-templates/{emailTemplate}/test-send', [EmailTemplateController::class, 'testSend'])->name('email-templates.test-send');
+    Route::get('/workshops/{workshop}/email-templates-workshops', [EmailTemplateController::class, 'getWorkshopsForDuplication'])->name('email-templates.workshops');
+    Route::get('/email-template-variables', [EmailTemplateController::class, 'variables'])->name('email-templates.variables');
 });
 
 require __DIR__.'/auth.php';

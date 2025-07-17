@@ -234,42 +234,42 @@
   - Show participant count using Metronic statistics widgets
   - _Requirements: 3.1, 3.2, 3.4_
 
-- [ ] 7.5 Create check-in interface with Metronic styling
+- [x] 7.5 Create check-in interface with Metronic styling
   - Create QR code scanning interface using Metronic camera components
   - Add manual entry form with Metronic search components
   - Display participant verification using Metronic alert components
   - _Requirements: 6.1, 6.2, 6.4, 6.5_
 
-- [ ] 7.6 Create dashboard using Metronic dashboard templates
+- [x] 7.6 Create dashboard using Metronic dashboard templates
   - Create main dashboard using public/demo1/dashboards/ as reference
   - Add workshop overview cards using Metronic statistics widgets
   - Implement charts using Metronic chart components
   - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
-- [ ] 7.7 Create user management views with Metronic user templates
+- [x] 7.7 Create user management views with Metronic user templates
   - Create user CRUD views using public/demo1/apps/user-management/ templates
   - Add role assignment interface using Metronic select components
   - Implement user filtering using Metronic search and filter components
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6_
 
 - [ ] 8. Implement email template management
-- [ ] 8.1 Create EmailTemplateController
+- [x] 8.1 Create EmailTemplateController
   - Implement email template CRUD operations per workshop
   - Add template preview and variable documentation
   - _Requirements: 7.1, 7.3, 7.4, 10.1_
 
-- [ ] 8.2 Create email template views
-  - Create template editing interface with variable helpers
+- [x] 8.2 Create email template views
+  - Create template editing interface with variable helpers( use TinyMCE)
   - Add template preview functionality
   - _Requirements: 7.1, 7.2, 7.3_
 
-- [ ] 8.3 Integrate template system with email sending
+- [x] 8.3 Integrate template system with email sending
   - Connect email templates with mailable classes
   - Implement variable substitution in EmailService
   - _Requirements: 7.2, 7.4, 7.5_
 
 - [ ] 9. Add authentication and authorization middleware
-- [ ] 9.1 Configure authentication routes and middleware
+- [x] 9.1 Configure authentication routes and middleware
   - Set up login/logout functionality with proper redirects
   - Add password reset functionality for internal users
   - _Requirements: 1.6, 10.1_

@@ -50,7 +50,7 @@
                 </span>
                 <div class="menu-sub menu-sub-accordion">
                     <div class="menu-item">
-                        <a class="menu-link" href="#">
+                        <a class="menu-link {{ request()->routeIs('workshops.index') ? 'active' : '' }}" href="{{ route('workshops.index') }}">
                             <span class="menu-bullet">
                                 <span class="bullet bullet-dot"></span>
                             </span>
@@ -59,7 +59,7 @@
                     </div>
                     @can('create workshops')
                     <div class="menu-item">
-                        <a class="menu-link" href="#">
+                        <a class="menu-link {{ request()->routeIs('workshops.create') ? 'active' : '' }}" href="{{ route('workshops.create') }}">
                             <span class="menu-bullet">
                                 <span class="bullet bullet-dot"></span>
                             </span>
@@ -87,7 +87,7 @@
                 </span>
                 <div class="menu-sub menu-sub-accordion">
                     <div class="menu-item">
-                        <a class="menu-link" href="#">
+                        <a class="menu-link {{ request()->routeIs('participants.index') ? 'active' : '' }}" href="{{ route('participants.index') }}">
                             <span class="menu-bullet">
                                 <span class="bullet bullet-dot"></span>
                             </span>
@@ -96,7 +96,7 @@
                     </div>
                     @can('import participants')
                     <div class="menu-item">
-                        <a class="menu-link" href="#">
+                        <a class="menu-link {{ request()->routeIs('participants.import') ? 'active' : '' }}" href="{{ route('participants.import') }}">
                             <span class="menu-bullet">
                                 <span class="bullet bullet-dot"></span>
                             </span>
@@ -110,8 +110,8 @@
             
             @can('view check-in')
             <!-- Check-in -->
-            <div class="menu-item">
-                <a class="menu-link" href="#">
+            <div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ request()->is('check-in*') ? 'here show' : '' }}">
+                <span class="menu-link">
                     <span class="menu-icon">
                         <i class="ki-duotone ki-scan-barcode fs-2">
                             <span class="path1"></span>
@@ -120,10 +120,41 @@
                             <span class="path4"></span>
                             <span class="path5"></span>
                             <span class="path6"></span>
+                            <span class="path7"></span>
+                            <span class="path8"></span>
                         </i>
                     </span>
                     <span class="menu-title">Check-in</span>
-                </a>
+                    <span class="menu-arrow"></span>
+                </span>
+                <div class="menu-sub menu-sub-accordion">
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->routeIs('check-in.index') ? 'active' : '' }}" href="{{ route('check-in.index') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">Check-in Dashboard</span>
+                        </a>
+                    </div>
+                    @can('check-in participants')
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->routeIs('check-in.scanner') ? 'active' : '' }}" href="{{ route('check-in.scanner') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">QR Scanner</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->routeIs('check-in.manual') ? 'active' : '' }}" href="{{ route('check-in.manual') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">Manual Check-in</span>
+                        </a>
+                    </div>
+                    @endcan
+                </div>
             </div>
             @endcan
             
