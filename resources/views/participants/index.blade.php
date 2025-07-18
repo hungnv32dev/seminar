@@ -238,7 +238,7 @@
                 <!--end::Table-->
                 
                 <!--begin::Pagination-->
-                @if($participants->hasPages())
+                {{-- @if($participants->hasPages())
                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <div class="d-flex align-items-center py-3">
                         <span class="text-gray-700">
@@ -247,7 +247,7 @@
                     </div>
                     {{ $participants->links() }}
                 </div>
-                @endif
+                @endif --}}
                 <!--end::Pagination-->
             </div>
             <!--end::Card body-->

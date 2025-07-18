@@ -170,7 +170,7 @@ class WorkshopService
     /**
      * Get all workshops with optional filters.
      */
-    public function getWorkshops(array $filters = []): Collection
+    public function getWorkshops(array $filters = [])
     {
         $query = Workshop::with(['creator', 'organizers', 'participants', 'ticketTypes']);
 
@@ -210,7 +210,7 @@ class WorkshopService
         $sortOrder = $filters['sort_order'] ?? 'desc';
         $query->orderBy($sortBy, $sortOrder);
 
-        return $query->get();
+        return $query->paginate(15)->appends(request()->query());
     }
 
     /**

@@ -23,13 +23,6 @@ class ParticipantController extends Controller
     {
         $this->participantService = $participantService;
         $this->emailService = $emailService;
-        
-        // Apply middleware for permissions
-        $this->middleware('can:view participants')->only(['index', 'show']);
-        $this->middleware('can:create participants')->only(['create', 'store']);
-        $this->middleware('can:edit participants')->only(['edit', 'update']);
-        $this->middleware('can:delete participants')->only(['destroy']);
-        $this->middleware('can:import participants')->only(['import', 'processImport']);
     }
 
     /**

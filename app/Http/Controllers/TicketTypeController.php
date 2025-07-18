@@ -14,11 +14,7 @@ class TicketTypeController extends Controller
 {
     public function __construct()
     {
-        // Apply middleware for permissions
-        $this->middleware('can:view ticket types')->only(['index', 'show']);
-        $this->middleware('can:create ticket types')->only(['create', 'store']);
-        $this->middleware('can:edit ticket types')->only(['edit', 'update']);
-        $this->middleware('can:delete ticket types')->only(['destroy']);
+        // Middleware will be handled by routes or attributes
     }
 
     /**
@@ -41,7 +37,7 @@ class TicketTypeController extends Controller
             $q->where('is_paid', true);
         }]);
 
-        $ticketTypes = $query->orderBy('workshop_id')->orderBy('name')->get();
+        $ticketTypes = $query->orderBy('workshop_id')->orderBy('name')->paginate(15)->appends(request()->query());
 
         // Get workshops for filter
         $workshops = Workshop::orderBy('name')->get(['id', 'name']);
@@ -182,7 +178,7 @@ class TicketTypeController extends Controller
             'ticket_types' => $ticketTypes->map(function ($ticketType) {
                 return [
                     'id' => $ticketType->id,
-                    'name' => $ticketType->name,
+                    'name' => Str::limit(strip_tags($ticketType->name), 100),
                     'price' => $ticketType->price,
                     'price_formatted' => '$' . number_format($ticketType->price, 2),
                     'participants_count' => $ticketType->participants_count,
@@ -239,7 +235,7 @@ class TicketTypeController extends Controller
         try {
             $duplicatedTicketType = TicketType::create([
                 'workshop_id' => $ticketType->workshop_id,
-                'name' => $ticketType->name . ' (Copy)',
+                'name' => Str::limit($ticketType->name, 95, '') . ' (Copy)',
                 'price' => $ticketType->price,
             ]);
 

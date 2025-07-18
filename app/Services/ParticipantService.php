@@ -261,7 +261,7 @@ class ParticipantService
     /**
      * Get participants with optional filters.
      */
-    public function getParticipants(array $filters = []): Collection
+    public function getParticipants(array $filters = [])
     {
         $query = Participant::with(['workshop', 'ticketType']);
 
@@ -296,7 +296,7 @@ class ParticipantService
         $sortOrder = $filters['sort_order'] ?? 'desc';
         $query->orderBy($sortBy, $sortOrder);
 
-        return $query->get();
+        return $query->paginate(15)->appends(request()->query());
     }
 
     /**

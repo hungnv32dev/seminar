@@ -19,12 +19,6 @@ class WorkshopController extends Controller
     public function __construct(WorkshopService $workshopService)
     {
         $this->workshopService = $workshopService;
-        
-        // Apply middleware for permissions
-        $this->middleware('can:view workshops')->only(['index', 'show']);
-        $this->middleware('can:create workshops')->only(['create', 'store']);
-        $this->middleware('can:edit workshops')->only(['edit', 'update']);
-        $this->middleware('can:delete workshops')->only(['destroy']);
     }
 
     /**

@@ -20,10 +20,6 @@ class CheckInController extends Controller
     {
         $this->participantService = $participantService;
         $this->qrCodeService = $qrCodeService;
-        
-        // Apply middleware for permissions
-        $this->middleware('can:view check-in')->only(['index', 'show']);
-        $this->middleware('can:check-in participants')->only(['checkIn', 'processCheckIn', 'manualCheckIn']);
     }
 
     /**

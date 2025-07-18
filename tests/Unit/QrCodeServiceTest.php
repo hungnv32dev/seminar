@@ -173,6 +173,9 @@ class QrCodeServiceTest extends TestCase
 
     public function test_validate_ticket_code_already_checked_in()
     {
+        // Ensure workshop is in valid status first
+        $this->workshop->update(['status' => 'published']);
+        
         $this->participant->update([
             'is_checked_in' => true,
             'checked_in_at' => now(),

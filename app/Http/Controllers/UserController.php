@@ -16,12 +16,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        // Apply middleware for permissions
-        $this->middleware('can:manage users')->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy']);
-        $this->middleware('can:view users')->only(['index', 'show']);
-        $this->middleware('can:create users')->only(['create', 'store']);
-        $this->middleware('can:edit users')->only(['edit', 'update', 'toggleStatus']);
-        $this->middleware('can:delete users')->only(['destroy']);
+        // Middleware will be handled by routes or attributes
     }
 
     /**

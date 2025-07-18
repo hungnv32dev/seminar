@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -17,102 +18,111 @@ class RolePermissionSeeder extends Seeder
 
         // Create permissions
         $permissions = [
-            // Workshop Management
+            // User management
+            'view users',
+            'create users',
+            'edit users',
+            'delete users',
+            'manage user roles',
+            
+            // Workshop management
             'view workshops',
             'create workshops',
             'edit workshops',
             'delete workshops',
-            'manage workshop statistics',
+            'manage workshop organizers',
             
-            // Participant Management
+            // Participant management
             'view participants',
             'create participants',
             'edit participants',
             'delete participants',
             'import participants',
             'export participants',
-            'manage participant payments',
-            'send participant emails',
             
-            // Ticket Type Management
+            // Ticket type management
             'view ticket types',
             'create ticket types',
             'edit ticket types',
             'delete ticket types',
             
-            // Check-in Management
-            'view check-ins',
-            'manage check-ins',
-            'scan qr codes',
-            'manual check-in',
-            'undo check-ins',
-            'export check-in reports',
-            
-            // User Management
-            'view users',
-            'create users',
-            'edit users',
-            'delete users',
-            'manage user roles',
-            'activate users',
-            'deactivate users',
-            
-            // Email Template Management
+            // Email template management
             'view email templates',
             'create email templates',
             'edit email templates',
             'delete email templates',
-            'send test emails',
+            'send emails',
             
-            // System Administration
+            // Check-in management
+            'view check-ins',
+            'manage check-ins',
+            'scan qr codes',
+            
+            // Dashboard and analytics
             'view dashboard',
-            'view system statistics',
+            'view analytics',
+            'view reports',
+            
+            // System administration
             'manage system settings',
+            'view logs',
         ];
 
         foreach ($permissions as $permission) {
-            \Spatie\Permission\Models\Permission::firstOrCreate(['name' => $permission]);
+            Permission::create(['name' => $permission]);
         }
 
         // Create roles and assign permissions
-        $adminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin']);
-        $managerRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'manager']);
-        $organizerRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'organizer']);
-        $assistantRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'assistant']);
+        
+        // Super Admin - has all permissions
+        $superAdmin = Role::create(['name' => 'super-admin']);
+        $superAdmin->givePermissionTo(Permission::all());
 
-        // Admin has all permissions
-        $adminRole->givePermissionTo(\Spatie\Permission\Models\Permission::all());
-
-        // Manager has most permissions except user management
-        $managerPermissions = [
-            'view workshops', 'create workshops', 'edit workshops', 'delete workshops', 'manage workshop statistics',
-            'view participants', 'create participants', 'edit participants', 'delete participants', 
-            'import participants', 'export participants', 'manage participant payments', 'send participant emails',
+        // Admin - has most permissions except system administration
+        $admin = Role::create(['name' => 'admin']);
+        $adminPermissions = [
+            'view users', 'create users', 'edit users', 'delete users', 'manage user roles',
+            'view workshops', 'create workshops', 'edit workshops', 'delete workshops', 'manage workshop organizers',
+            'view participants', 'create participants', 'edit participants', 'delete participants', 'import participants', 'export participants',
             'view ticket types', 'create ticket types', 'edit ticket types', 'delete ticket types',
-            'view check-ins', 'manage check-ins', 'scan qr codes', 'manual check-in', 'undo check-ins', 'export check-in reports',
-            'view email templates', 'create email templates', 'edit email templates', 'delete email templates', 'send test emails',
-            'view dashboard', 'view system statistics',
+            'view email templates', 'create email templates', 'edit email templates', 'delete email templates', 'send emails',
+            'view check-ins', 'manage check-ins', 'scan qr codes',
+            'view dashboard', 'view analytics', 'view reports',
         ];
-        $managerRole->givePermissionTo($managerPermissions);
+        $admin->givePermissionTo($adminPermissions);
 
-        // Organizer can manage workshops and participants
+        // Organizer - can manage workshops and participants
+        $organizer = Role::create(['name' => 'organizer']);
         $organizerPermissions = [
-            'view workshops', 'create workshops', 'edit workshops', 'manage workshop statistics',
-            'view participants', 'create participants', 'edit participants', 'import participants', 
-            'export participants', 'manage participant payments', 'send participant emails',
+            'view workshops', 'create workshops', 'edit workshops',
+            'view participants', 'create participants', 'edit participants', 'import participants', 'export participants',
             'view ticket types', 'create ticket types', 'edit ticket types',
-            'view check-ins', 'manage check-ins', 'scan qr codes', 'manual check-in', 'export check-in reports',
-            'view email templates', 'create email templates', 'edit email templates', 'send test emails',
+            'view email templates', 'create email templates', 'edit email templates', 'send emails',
+            'view check-ins', 'manage check-ins', 'scan qr codes',
+            'view dashboard', 'view analytics',
+        ];
+        $organizer->givePermissionTo($organizerPermissions);
+
+        // Staff - can manage check-ins and view basic information
+        $staff = Role::create(['name' => 'staff']);
+        $staffPermissions = [
+            'view workshops',
+            'view participants',
+            'view check-ins', 'manage check-ins', 'scan qr codes',
             'view dashboard',
         ];
-        $organizerRole->givePermissionTo($organizerPermissions);
+        $staff->givePermissionTo($staffPermissions);
 
-        // Assistant has limited permissions
-        $assistantPermissions = [
-            'view workshops', 'view participants', 'view ticket types',
-            'view check-ins', 'manage check-ins', 'scan qr codes', 'manual check-in',
-            'view email templates', 'view dashboard',
+        // Viewer - read-only access
+        $viewer = Role::create(['name' => 'viewer']);
+        $viewerPermissions = [
+            'view workshops',
+            'view participants',
+            'view ticket types',
+            'view email templates',
+            'view check-ins',
+            'view dashboard', 'view analytics', 'view reports',
         ];
-        $assistantRole->givePermissionTo($assistantPermissions);
+        $viewer->givePermissionTo($viewerPermissions);
     }
 }

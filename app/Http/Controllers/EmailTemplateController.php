@@ -14,12 +14,7 @@ class EmailTemplateController extends Controller
 {
     public function __construct()
     {
-        // Apply middleware for permissions
-        $this->middleware('can:manage workshops')->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy']);
-        $this->middleware('can:view workshops')->only(['index', 'show', 'preview']);
-        $this->middleware('can:create workshops')->only(['create', 'store']);
-        $this->middleware('can:edit workshops')->only(['edit', 'update']);
-        $this->middleware('can:delete workshops')->only(['destroy']);
+        // Middleware will be handled by routes or attributes
     }
 
     /**
